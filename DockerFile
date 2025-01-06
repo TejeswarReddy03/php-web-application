@@ -1,0 +1,17 @@
+FROM php:8.1-apache
+
+# Copy application files
+COPY . /var/www/html/
+
+# Set permissions for images folder
+RUN chown -R www-data:www-data /var/www/html/images \
+    && chmod -R 755 /var/www/html/images
+
+# Enable Apache rewrite module
+RUN a2enmod rewrite
+
+# Configure Apache to use environment variable for port
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
+
+EXPOSE ${PORT}
+CMD ["apache2-foreground"]
